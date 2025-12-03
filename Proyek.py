@@ -74,7 +74,7 @@ def main():
 
     # Tombol manual refresh (pengganti st_autorefresh)
     if st.sidebar.button("Refresh Waktu"):
-        st.experimental_rerun()
+        st.rerun()
 
     # ============================================
     # HALAMAN UTAMA
