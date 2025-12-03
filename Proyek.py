@@ -84,7 +84,7 @@ def main():
     with col1:
         st.write("")
         st.write("")
-        st.image("C:/Users/Damar R. Wicaksono/Downloads/logofix.png", width=200)
+        st.image("logofix.png", width=200)
 
     with col2:
         st.title("TamengTambang - Access Card")
