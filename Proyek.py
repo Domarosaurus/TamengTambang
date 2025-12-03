@@ -1,8 +1,5 @@
 import streamlit as st
 from datetime import datetime
-from streamlit_autorefresh import st_autorefresh
-
-count = st_autorefresh(interval=1000)
 
 # ============================================================
 # PROGRAM ACCESS CARD - MINING SITE PT INDAH IMUT DAN MERONA
@@ -60,20 +57,24 @@ def init_state():
 
 
 def jam_operasional_ditutup() -> bool:
-    sekarang = datetime.now()
-    jam = sekarang.hour
+    jam = datetime.now().hour
     return jam >= 18 or jam <= 5
 
 
 def main():
     init_state()
 
+    # Menampilkan waktu berjalan (tanpa autorefresh library)
     sekarang = datetime.now()
     waktu = sekarang.hour
     menit = sekarang.minute
     detik = sekarang.second
 
     st.set_page_config(page_title="Access Card - Mining Site", layout="centered")
+
+    # Tombol manual refresh (pengganti st_autorefresh)
+    if st.sidebar.button("Refresh Waktu"):
+        st.experimental_rerun()
 
     # ============================================
     # HALAMAN UTAMA
@@ -86,11 +87,11 @@ def main():
         st.image("C:/Users/Damar R. Wicaksono/Downloads/logofix.png", width=200)
 
     with col2:
-        st.title("TamengTambang -                    Access Card")
+        st.title("TamengTambang - Access Card")
 
     st.subheader("PT INDAH IMUT DAN MERONA")
     st.caption("Jam operasional: 05.00 - 18.00 WIB")
-    st.caption(f"{waktu:02d}:{menit:02d}:{detik:02d} WIB")
+    st.caption(f"{waktu:02d}:{menit:02d} WIB")
 
     # ============================
     # MENU BARU
@@ -117,10 +118,7 @@ def main():
     if menu.startswith("1"):
         st.header("Cek Akses Karyawan")
 
-        no = st.text_input(
-            "Masukkan Nomor Induk Karyawan (NIP)",
-            key="input_nip"
-        )
+        no = st.text_input("Masukkan Nomor Induk Karyawan (NIP)")
 
         if st.button("Cek Akses"):
             st.session_state.hasil_cek = no
@@ -157,7 +155,7 @@ def main():
         st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
 
     # ======================================
-    # 2. Ubah Jabatan Karyawan
+    # 2. Ubah Jabatan
     # ======================================
     elif menu.startswith("2"):
         st.header("Ubah Jabatan Karyawan")
@@ -172,7 +170,9 @@ def main():
             if nip_edit in nip_list:
                 index = nip_list.index(nip_edit)
                 jabatan_list[index] = jabatan_baru
-                st.success(f"Jabatan untuk NIP {nip_edit} berhasil diubah menjadi: {jabatan_baru}")
+                st.success(
+                    f"Jabatan untuk NIP {nip_edit} berhasil diubah menjadi: {jabatan_baru}"
+                )
             else:
                 st.error("NIP tidak ditemukan!")
 
@@ -180,11 +180,11 @@ def main():
         st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
 
     # ======================================
-    # 3. Tambah Karyawan Baru
+    # 3. Tambah Karyawan
     # ======================================
     elif menu.startswith("3"):
         st.header("Tambah Karyawan Baru")
-        nip_baru = st.text_input("Masukkan Nomor Induk Karyawan Baru (NIP)")
+        nip_baru = st.text_input("Masukkan NIP Baru")
         nama_baru = st.text_input("Masukkan Nama")
         jabatan_baru = st.text_input("Masukkan Jabatan")
 
@@ -205,7 +205,7 @@ def main():
         st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
 
     # ======================================
-    # 4. Menambahkan Daftar Akses
+    # 4. Tambah Daftar Akses
     # ======================================
     elif menu.startswith("4"):
         st.header("Menambahkan Daftar Akses Jabatan")
@@ -220,20 +220,20 @@ def main():
                 st.warning("Harap isi nama jabatan.")
             else:
                 diizinkan.append(izin_baru)
-                st.session_state.diizinkan = diizinkan
                 st.success("Jabatan berhasil didaftarkan.")
 
         st.markdown("---")
-        st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
+        st.caption("© PT Indah Imut dan Merona 2025")
 
     # ======================================
     # 5. Lihat Daftar Karyawan
     # ======================================
     elif menu.startswith("5"):
-        st.header("Daftar Karyawan PT. Indah Imut dan Merona")
+        st.header("Daftar Karyawan")
 
         if st.session_state.nip:
             import pandas as pd
+
             df = pd.DataFrame(
                 {
                     "NIP": st.session_state.nip,
@@ -241,8 +241,7 @@ def main():
                     "Jabatan": st.session_state.jabatan,
                 }
             )
-
-            df.index = df.index + 1
+            df.index += 1
             df.index.name = "No"
 
             st.dataframe(df, use_container_width=True)
@@ -250,22 +249,22 @@ def main():
             st.info("Belum ada data karyawan.")
 
         st.markdown("---")
-        st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
+        st.caption("© PT Indah Imut dan Merona 2025")
 
     # ======================================
-    # 6. Lihat Jabatan yang Diizinkan
+    # 6. Lihat Jabatan Akses
     # ======================================
     elif menu.startswith("6"):
         st.header("Jabatan yang Diizinkan Masuk Area Khusus")
 
         if st.session_state.diizinkan:
-            for i, jbt in enumerate(st.session_state.diizinkan, start=1):
-                st.write(f"{i}. {jbt}")
+            for i, j in enumerate(st.session_state.diizinkan, start=1):
+                st.write(f"{i}. {j}")
         else:
             st.info("Belum ada jabatan yang diizinkan.")
 
         st.markdown("---")
-        st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
+        st.caption("© PT Indah Imut dan Merona 2025")
 
     # ======================================
     # 7. About Program
@@ -281,14 +280,14 @@ def main():
             st.write(f"{Nim[i]} — {kelompok[i]}")
 
         st.markdown("---")
-        st.caption("© PT Indah Imut dan Merona 2025 (Kelompok 1)")
+        st.caption("© PT Indah Imut dan Merona 2025")
 
     # ======================================
-    # 8. Keluar Program
+    # 8. Exit
     # ======================================
     elif menu.startswith("8"):
         st.header("Keluar dari Program")
-        st.info("Untuk keluar, tutup tab atau jendela aplikasi.")
+        st.info("Tutup tab untuk keluar aplikasi.")
 
 
 if __name__ == "__main__":
