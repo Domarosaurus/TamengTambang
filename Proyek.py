@@ -79,16 +79,8 @@ def main():
     # ============================================
     # HALAMAN UTAMA
     # ============================================
-    col1, col2 = st.columns([1, 3])
-
-    with col1:
-        st.write("")
-        st.write("")
-        st.image("logofix.png", width=200)
-
-    with col2:
-        st.title("TamengTambang - Access Card")
-
+   
+    st.title("TamengTambang - Access Card")
     st.subheader("PT INDAH IMUT DAN MERONA")
     st.caption("Jam operasional: 05.00 - 18.00 WIB")
     st.caption(f"{waktu:02d}:{menit:02d} WIB")
